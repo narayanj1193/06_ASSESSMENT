@@ -11,6 +11,8 @@ def plot_parabola(b, c):
     y_parabola = a * x_parabola**2 + b * x_parabola + c
 
     plt.plot(x_parabola, y_parabola, label='Parabola')
+    plt.axhline(color='black')  # Add a horizontal line at y=0
+    plt.axvline(color='black')
     plt.xlabel('x')
     plt.ylabel('y')
     plt.title('Parabola')
