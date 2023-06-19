@@ -1,21 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import random
 
-def linear_generator(x, y):
 
-    if x > 10:
-        x_points = [x, x-15]
-    else:
-        x_points = [x, x+15]
+def linear_generator(gradient, y_intercept):
 
-    if y > 10:
-        y_points = [y, y-15]
-    else:
-        y_points = [y, y+15]
+    x_linear = np.linspace(-15, 15, 40)
+    y_linear = gradient * x_linear + y_intercept
 
     # plotting the points
-    plt.plot(x_points, y_points, linewidth=3, label='Linear')
+    plt.plot(x_linear, y_linear, linewidth=3, label='Linear')
 
     plt.ylim(-25, 20)
     plt.xlim(-20, 20)
@@ -28,9 +21,17 @@ def linear_generator(x, y):
     # giving a title to my graph
     plt.title('Linear Graph')
 
+    plt.axhline(color='black')
+    plt.axvline(color='black')
+    plt.grid()
+
     plt.legend()
 
     # function to show the plot
     plt.show()
 
-linear_generator(random.randint(-15, 15), random.randint(-15, 15))
+
+gradient = float(input("Enter Gradient: "))
+y_intercept = float(input("Enter y-int: "))
+
+linear_generator(gradient, y_intercept)

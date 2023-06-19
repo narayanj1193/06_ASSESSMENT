@@ -32,7 +32,6 @@ def instructions():
 # Main routine
 
 
-
 while True:
     played_before = yes_no_checker("Have you played this game before? ")
 
@@ -40,6 +39,5 @@ while True:
         instructions()
     else:
         print("Program Continues")
-
 
     print()
