@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 
 def linear_generator(gradient, y_intercept):
-
     x_linear = np.linspace(-15, 15, 40)
     y_linear = gradient * x_linear + y_intercept
 
@@ -23,15 +23,30 @@ def linear_generator(gradient, y_intercept):
 
     plt.axhline(color='black')
     plt.axvline(color='black')
-    plt.grid()
-
     plt.legend()
+
+    plt.grid()
 
     # function to show the plot
     plt.show()
 
 
-gradient = float(input("Enter Gradient: "))
-y_intercept = float(input("Enter y-int: "))
+# gradient = float(input("Enter Gradient: "))
+# y_intercept = float(input("Enter y-int: "))
+end_game = ""
+while end_game != "xxx":
 
-linear_generator(gradient, y_intercept)
+    difficulty = input("Easy or Hard? ")
+
+    if difficulty == "hard":
+        gradient = round(random.uniform(0.5, 5), 1)
+        y_intercept = random.randint(-10, 10)
+
+    else:
+        print("Easy Mode.\n")
+        gradient = random.randint(1,8)
+        y_intercept = random.randint(-10, 10)
+
+    print(gradient, y_intercept)
+
+    linear_generator(gradient, y_intercept)
