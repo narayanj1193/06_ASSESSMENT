@@ -1,23 +1,10 @@
+import numpy as np
+import matplotlib.pyplot as plt
 import random
 
-# Functions at the top
-def statement_generator(statement, decoration, above_below):
-    sides = decoration * 3
 
-    statement = f"{sides} {statement} {sides}"
-    top_bottom = above_below * len(statement)
-
-    print(top_bottom)
-    print(statement)
-    print(top_bottom)
-
-    return ""
-
-# Parabola generator
 def plot_parabola(x_intercepts_equation, vertex_equation, scale_factor):
     x_parabola = np.linspace(-20, 20, 10000)
-
-    k = scale_factor
 
     if x_intercepts_equation:
         x_1, x_2 = x_intercepts
@@ -53,7 +40,6 @@ def plot_parabola(x_intercepts_equation, vertex_equation, scale_factor):
 
     return parabola_formula
 
-# User Choice Checker
 def user_choice(question, valid_list):
     # error code
     error = "Please choose a valid input."
@@ -72,35 +58,57 @@ def user_choice(question, valid_list):
         print(f"{error}\n")
 
 
-# Main Routine
+# Main routine
+valid_difficulty = ["easy", "medium", "hard", "xxx"]
 
-questions_answered = 0
-questions_attempted = 0
-questions_incorrect = 0
+end_game = ""
+while end_game != "xxx":
 
-amount_guesses = 0
-guess = 0
+    # ask user for choice, check if its valid
+    difficulty = user_choice("Choose your difficulty (Easy, Medium, or Hard): ", valid_difficulty)
 
-question_summary = []
+    print(difficulty)
 
-# creates a decorative statement, adds aesthetic to program, welcomes users
+    # print output
+    if difficulty == "xxx":
+        break
 
-statement_generator("Welcome to Graphs Quiz", "!", "*")
+    elif difficulty == "easy":
+        x_1 = random.randint(1, 10)
+        x_2 = random.randint((x_1 - 2), (x_1 + 2))
 
-# ask user if they have played before, if not, display instructions
-played_before = yes_no_checker("Have you tried this quiz before? ")
-if played_before == "no":
-    instructions()
+        k = random.randint(1, 2)
 
-# asks user if they would like to do a quiz on types of graphs
-mode = choice_checker("Would you like to be quizzed on Linear graphs, Parabola graphs, or a mix? ")
+        vertex = [random.randint(0, 5), random.randint(0, 5)]
 
-# asks for rounds
-rounds = num_check("How many questions would you like to answer? <enter> "
-                   "for continuous mode: ")
+    elif difficulty == "medium":
+        x_1 = random.randint(-20, 20) * 0.5
+        x_2 = round(random.uniform(x_1 - 5.5, x_1 + 5.5))
 
-if rounds == "":
-    rounds_mode = "continuous"
+        k = random.randint(1, 5)
 
-end_game = "no"
-while end_game == "no":
+        vertex = [random.randint(-20, 20) * 0.5, random.randint(-20, 20) * 0.5]
+
+    else:
+        x_1 = round(random.uniform(-10, 10), 1)
+        x_2 = round(random.uniform(x_1 - 5, x_1 + 5), 1)
+
+        k = 0
+        while k == 0:
+            k = random.randint(-5, 5)
+
+        vertex = [round(random.uniform(-10, 10), 1), round(random.randint(-10, 10), 1)]
+
+    x_intercepts = [x_1, x_2]
+
+    use_vertex = random.choice([True, False])
+
+    if not use_vertex:
+        print(x_intercepts)
+        parabola_formula = plot_parabola(x_intercepts, False, k)
+
+    else:
+        print(vertex)
+        parabola_formula = plot_parabola(False, vertex, k)
+
+    print(parabola_formula)
