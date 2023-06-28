@@ -9,7 +9,6 @@ def num_check(question):
         if response == "xxx":
             return response
 
-
         elif response != "":
             try:
                 # Check that the response is an integer more than zero
@@ -23,6 +22,7 @@ def num_check(question):
             except ValueError:
                 print(error)
                 continue
+
         return response
 
 
@@ -32,7 +32,6 @@ instruction = "enter a number"
 
 # ask user for # of Questions, <enter> for continuous mode
 questions = num_check("How many questions would you like to answer? <enter> for continuous mode: ")
-
 
 while questions != "xxx":
 

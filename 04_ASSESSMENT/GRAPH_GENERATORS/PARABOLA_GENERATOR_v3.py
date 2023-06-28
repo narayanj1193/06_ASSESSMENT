@@ -102,4 +102,3 @@ while end_game != "xxx":
     formula = plot_parabola(difficulty_parabola)
     print(formula)
 
-
