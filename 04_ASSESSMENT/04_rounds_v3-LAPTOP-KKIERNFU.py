@@ -1,4 +1,5 @@
 import fractions
+
 from sympy import symbols
 
 
@@ -12,15 +13,12 @@ def num_check(question, int_only=True):
 
         if response == "xxx":
             return response
-        elif response == "":
-            if int_only:
-                return response
-            else:
-                print(error)
-                continue
 
         elif response != "":
+
             if not int_only:
+                x = symbols('x')
+                y = symbols('y')
 
                 try:
                     # Attempt to parse the response as a number
@@ -43,7 +41,6 @@ def num_check(question, int_only=True):
                     print("Error: Invalid expression.")
                     continue
 
-            # if int_only is true
             else:
                 try:
                     # Check that the response is an integer more than zero
@@ -57,7 +54,7 @@ def num_check(question, int_only=True):
                 except ValueError:
                     print(error)
                     continue
-            return response
+        return response
 
 
 # Main routine
@@ -80,7 +77,7 @@ while questions != "xxx":
         heading = f"Question {questions_attempted + 1} of {questions}"
 
     print(heading)
-    choose = num_check(f"{instruction} or 'xxx' to end: ", False)
+    choose = input(f"{instruction} or 'xxx' to end: ")
 
     if choose == "xxx":
         break

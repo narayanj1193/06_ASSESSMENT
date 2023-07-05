@@ -20,6 +20,8 @@ def linear_generator(difficulty):
     x_linear = np.linspace(-15, 15, 40)
     y_linear = gradient * x_linear + y_intercept
 
+    linear_formula = f'{gradient} * x + {y_intercept}'
+
     # plotting the points
     plt.plot(x_linear, y_linear, linewidth=3, label='Linear')
 
@@ -45,6 +47,8 @@ def linear_generator(difficulty):
 
     print(gradient)
     print(y_intercept)
+
+    return linear_formula
 
 
 end_game = ""

@@ -1,6 +1,4 @@
 import fractions
-from sympy import symbols
-
 
 def num_check(question, int_only=True):
     # Error message
@@ -21,10 +19,16 @@ def num_check(question, int_only=True):
 
         elif response != "":
             if not int_only:
+                # Check if the response is 'x' or an equation containing 'x'
+                if response.lower() == 'x' or ('x' in response.lower() and '+' in response or '-' in response):
+                    return response
+
+                if '^' in response and '2' in response:
+                    return response
 
                 try:
                     # Attempt to parse the response as a number
-                    number = eval(response.replace('x', '120').replace('y', '121'))
+                    number = eval(response)
 
                     # Check if the number is a float or fraction
                     if isinstance(number, float) or isinstance(number, int) or isinstance(number, fractions.Fraction):
@@ -40,8 +44,8 @@ def num_check(question, int_only=True):
                     print("Error: Division by zero.")
                     continue
                 except SyntaxError:
-                    print("Error: Invalid expression.")
-                    continue
+                    # Return the response as a string if it's a valid equation
+                    return response
 
             # if int_only is true
             else:
@@ -58,7 +62,6 @@ def num_check(question, int_only=True):
                     print(error)
                     continue
             return response
-
 
 # Main routine
 questions_attempted = 0
@@ -80,7 +83,7 @@ while questions != "xxx":
         heading = f"Question {questions_attempted + 1} of {questions}"
 
     print(heading)
-    choose = num_check(f"{instruction} or 'xxx' to end: ", False)
+    choose = input(f"{instruction} or 'xxx' to end: ")
 
     if choose == "xxx":
         break

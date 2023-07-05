@@ -1,5 +1,5 @@
+import sympy as sp
 import fractions
-from sympy import symbols
 
 
 def num_check(question, int_only=True):
@@ -60,33 +60,39 @@ def num_check(question, int_only=True):
             return response
 
 
-# Main routine
-questions_attempted = 0
-instruction = "Enter a number"
+def compare_equations(eq1, eq2):
 
-# Ask the user for the number of questions or enter for continuous mode
-questions = num_check("How many questions would you like to answer? <enter> for continuous mode: ", True)
+    if '^' in eq1:
+        eq1 = eq1.replace('^', '**')
 
-while questions != "xxx":
+    if '^' in eq2:
+        eq2 = eq2.replace('^', '**')
 
-    if questions_attempted == questions:
-        break
+    x = sp.Symbol('x')
+    correct = True
 
-    # Questions Heading
-    print()
-    if questions == "":
-        heading = f"Continuous Mode: Question {questions_attempted + 1}"
+    for i in range(-20, 21):
+        x_val = i
+        y1 = sp.sympify(eq1).subs(x, x_val)
+        y2 = sp.sympify(eq2).subs(x, x_val)
+
+        if y1 != y2:
+            correct = False
+            break
+
+    if correct:
+        print("Your equation is correct")
     else:
-        heading = f"Question {questions_attempted + 1} of {questions}"
+        print("Your equation is incorrect")
 
-    print(heading)
-    choose = num_check(f"{instruction} or 'xxx' to end: ", False)
 
-    if choose == "xxx":
-        break
+# Example usage:
+eq1 = "(x + 2) * (x - 3)"
+while True:
+    eq2 = num_check("Enter an equation: ", False)
+    try:
+        compare_equations(eq1, eq2)
+        print(eq2)
 
-    # Rest of the loop
-    print(f"You chose {choose}")
-    questions_attempted += 1
-
-print("Thanks for playing!")
+    except sp.SympifyError:
+        print("Invalid equation format. Please try again.")

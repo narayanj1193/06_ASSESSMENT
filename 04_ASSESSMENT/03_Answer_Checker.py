@@ -1,24 +1,26 @@
-from sympy import symbols, Eq, solve
+from sympy import symbols
+
 
 def answer_checker(user_answer, valid_answer):
     if user_answer == valid_answer.replace('**', '^'):
-        print(user_answer, valid_answer)
         return True
 
     else:
-        print(user_answer, valid_answer)
         return False
 
 x = symbols('x')
 y = symbols('y')
 
 valid_answer = "y = x**2"
-user_answer = input("What is the equation? ")
 
-true = answer_checker(user_answer, valid_answer)
+while True:
+    user_answer = input("What is the equation? ")
 
-if true:
-    print("Your answer is correct")
+    true = answer_checker(user_answer, valid_answer)
 
-elif true == False:
+    if true:
+        print("Your answer is correct")
+
+    elif not true:
+        print("Your answer is incorrect ")
 

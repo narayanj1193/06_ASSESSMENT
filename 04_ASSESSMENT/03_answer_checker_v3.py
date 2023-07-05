@@ -1,5 +1,5 @@
+import sympy as sp
 import fractions
-from sympy import symbols
 
 
 def num_check(question, int_only=True):
@@ -21,10 +21,13 @@ def num_check(question, int_only=True):
 
         elif response != "":
             if not int_only:
+                # Check if the response is 'x' or an equation containing 'x'
+                if response.lower() == 'x' or ('x' in response.lower() and '+' in response or '-' in response):
+                    return response
 
                 try:
                     # Attempt to parse the response as a number
-                    number = eval(response.replace('x', '120').replace('y', '121'))
+                    number = eval(response)
 
                     # Check if the number is a float or fraction
                     if isinstance(number, float) or isinstance(number, int) or isinstance(number, fractions.Fraction):
@@ -40,8 +43,8 @@ def num_check(question, int_only=True):
                     print("Error: Division by zero.")
                     continue
                 except SyntaxError:
-                    print("Error: Invalid expression.")
-                    continue
+                    # Return the response as a string if it's a valid equation
+                    return response
 
             # if int_only is true
             else:
@@ -60,33 +63,43 @@ def num_check(question, int_only=True):
             return response
 
 
-# Main routine
-questions_attempted = 0
-instruction = "Enter a number"
 
-# Ask the user for the number of questions or enter for continuous mode
-questions = num_check("How many questions would you like to answer? <enter> for continuous mode: ", True)
+def answer_checker(eq1, eq2):
+    try:
+        if '^' in eq1:
+            eq1 = eq1.replace('^', '**').replace(' ', '')
 
-while questions != "xxx":
+        if '^' in eq2:
+            eq2 = eq2.replace('^', '**').replace(' ', '')
 
-    if questions_attempted == questions:
-        break
+    except TypeError:
+        print("Invalid equation. Please try again.")
+        return
 
-    # Questions Heading
-    print()
-    if questions == "":
-        heading = f"Continuous Mode: Question {questions_attempted + 1}"
-    else:
-        heading = f"Question {questions_attempted + 1} of {questions}"
+    x = sp.symbols('x')
+    correct = True
 
-    print(heading)
-    choose = num_check(f"{instruction} or 'xxx' to end: ", False)
+    for i in range(-20, 21):
+        x_val = i
+        try:
+            # Evaluate the equations
+            y1 = eval(eq1)
+            y2 = eval(eq2)
 
-    if choose == "xxx":
-        break
+            if y1 != y2:
+                correct = False
+                break
 
-    # Rest of the loop
-    print(f"You chose {choose}")
-    questions_attempted += 1
+        except TypeError:
+            print("Invalid equation. Please try again.")
+            return
 
-print("Thanks for playing!")
+    return correct
+
+# Example usage:
+eq1 = 'x^2'
+while True:
+    eq2 = num_check("Enter an equation: ", False)
+    answer_checker(eq1, eq2)
+    print(eq2)
+
