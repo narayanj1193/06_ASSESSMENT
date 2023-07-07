@@ -154,12 +154,7 @@ def num_check(question, int_only=True):
         response = input(question)
 
         if response == "xxx":
-            # If the user enters 'xxx', ask for confirmation to quit
-            confirm_quit = user_choice('Are you sure you would like to quit? ', ['yes', 'no'])
-            if confirm_quit == 'no':
-                continue
-            else:
-                return "end_game"
+            return "end_game"
 
         elif response == "":
             if int_only:
@@ -244,6 +239,12 @@ def answer_checker(eq1, eq2):
         print("Invalid equation. Please try again.")
         return 'try again'
 
+def find_random_coordinate(graph_formula):
+    x = random.randint(-5, 5)  # Assuming x ranges from -100 to 100
+    x_val = sp.symbols('x')
+    y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
+    y = round(y, 1)
+    return x, y
 
 def statement_generator(statement, decoration, above_below, has_emoji=False):
     sides = decoration * 3
@@ -302,6 +303,9 @@ while end_game is not True:
     next_question = False
     amount_attempts = 0
 
+    if end_game is True:
+        break
+
     if questions != "" and questions_attempted == questions:
         end_game = True
 
@@ -327,7 +331,7 @@ while end_game is not True:
         else:
             graph_formula = parabola_generator(difficulty)
 
-    while next_question is not True:
+    while next_question is not True and end_game is not True:
         hint_given = False
 
         if amount_attempts <= 2:
@@ -341,6 +345,9 @@ while end_game is not True:
                 graph_formula = graph_formula.replace(".0", "")
 
             user_equation = num_check("\nWhat is the equation of the graph? ", False)
+            if user_equation == "end_game":
+                end_game = True
+                break
 
             try:
                 users_result = answer_checker(graph_formula, user_equation)
@@ -355,10 +362,11 @@ while end_game is not True:
                 print("Incorrect ❌")
 
                 if hint_given is not True:
-                    give_hint = user_choice('Would you like a hint?', yes_no_list)
+                    give_hint = user_choice('Would you like a hint? ', yes_no_list)
 
                     if give_hint == "yes":
-                        print("The graph passes through: ")
+                        random_coordinate = find_random_coordinate(graph_formula)
+                        print(f"The graph passes through: {random_coordinate}")
 
             else:
                 print(f"The equation of the graph is: {graph_formula}")
@@ -380,7 +388,9 @@ while end_game is not True:
             outcome = f"Question{questions_attempted}: You ran out of guesses 🥲."
         game_summary.append(outcome)
         guess_array.append(amount_attempts)
-if questions_attempted > 0:
+
+
+if not True and questions_attempted > 0:
     # Calculate quiz stats
     average_attempts = mean(guess_array)
 

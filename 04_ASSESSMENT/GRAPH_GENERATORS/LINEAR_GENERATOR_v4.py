@@ -1,12 +1,15 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import threading
+
+# Global variable to store the user's response
+user_response = None
 
 
-def display_linear(x_linear, y_linear):
-
+def display_graph(x, y, graph_type):
     # Plots graph
-    plt.plot(x_linear, y_linear, linewidth=3, label='Linear')
+    plt.plot(x, y, linewidth=3, label='Linear')
 
     # Limits y axis
     plt.ylim(-25, 20)
@@ -16,7 +19,12 @@ def display_linear(x_linear, y_linear):
     # Details on graph
     plt.xlabel('x - axis')
     plt.ylabel('y - axis')
-    plt.title('Linear Graph')
+
+    if graph_type == "Linear":
+        plt.title('Linear Graph')
+
+    else:
+        plt.title('Parabola Graph')
 
     # horizontal axis line at y = 0
     plt.axhline(color='black')
@@ -30,9 +38,7 @@ def display_linear(x_linear, y_linear):
     plt.show()
 
 
-# Function to generate a linear graph based on the specified difficulty level
 def generate_linear(difficulty):
-
     if difficulty == "hard":
         # If difficulty is hard the gradient will be any random decimal between 0.5 and 5.
         gradient = round(random.uniform(0.5, 5), 1)
@@ -62,9 +68,27 @@ def generate_linear(difficulty):
     linear_formula = f'{gradient} * x + {y_intercept}'
 
     # returns the equation of the graph
-    return x_linear, y_linear, linear_formula
+    return x_linear, y_linear, linear_formula, "linear"
+
+
+def ask_equation():
+    global user_response
+    user_response = input("What is the equation of the graph? ")
+    plt.close()
 
 
 # Main routine
-x_linear, y_linear, linear_formula = generate_linear("hard")
-display_linear(x_linear, y_linear)
+x_linear, y_linear, linear_formula, graph_type = generate_linear("hard")
+
+# Create and start a thread to ask the equation
+equation_thread = threading.Thread(target=ask_equation)
+equation_thread.start()
+
+# Display the graph
+display_linear(x_linear, y_linear, graph_type)
+
+# Wait for the equation thread to complete
+equation_thread.join()
+
+# Access the user's response
+print("User's response:", user_response)
