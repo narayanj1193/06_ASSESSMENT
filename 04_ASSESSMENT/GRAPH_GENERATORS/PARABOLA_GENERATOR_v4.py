@@ -34,35 +34,51 @@ def display_graph(x, y, graph_type):
     plt.show()
 
 
-def generate_linear(difficulty):
-    if difficulty == "hard":
-        # If difficulty is hard the gradient will be any random decimal between 0.5 and 5.
-        gradient = round(random.uniform(0.5, 5), 1)
+def generate_parabola(difficulty):
+    x_parabola = np.linspace(-20, 20, 10000)
 
-        # If difficulty is hard the y_intercept will be any random decimal between -15 and 15
-        y_intercept = round(random.uniform(-15, 15), 1)
+    if difficulty == "easy":
+        x_1 = random.randint(1, 10)
+        x_2 = random.randint((x_1 - 2), (x_1 + 2))
+
+        k = random.randint(1, 2)
+
+        vertex = [random.randint(0, 5), random.randint(0, 5)]
+
     elif difficulty == "medium":
-        # If difficulty is medium the gradient will be a multiple of 0.5 between 0.5 and 10
-        gradient = random.randint(1, 20) * 0.5
+        x_1 = random.randint(-20, 20) * 0.5
+        x_2 = round(random.uniform(x_1 - 5.5, x_1 + 5.5))
 
-        # If difficulty is medium the y_intercept will be a multiple of 0.5 between -15, and 15
-        y_intercept = random.randint(-30, 30) * 0.5
+        k = random.randint(1, 5)
+
+        vertex = [random.randint(-20, 20) * 0.5, random.randint(-20, 20) * 0.5]
+
     else:
-        # (easy mode) generates features that are integers
-        gradient = random.randint(1, 8)
-        y_intercept = random.randint(-15, 15)
+        x_1 = round(random.uniform(-10, 10), 1)
+        x_2 = round(random.uniform(x_1 - 5, x_1 + 5), 1)
 
-    # Array of x points that is used for calculating the y points.
-    x_linear = np.linspace(-15, 15, 40)
+        k = 0
+        while k == 0:
+            k = random.randint(-5, 5)
 
-    # Placement of y coordinate according to the x points
-    y_linear = gradient * x_linear + y_intercept
+        vertex = [round(random.uniform(-10, 10), 1), round(random.randint(-10, 10), 1)]
 
-    # Formula of the graph
-    linear_formula = f'{gradient} * x + {y_intercept}'
+    x_intercepts = [x_1, x_2]
+
+    use_vertex = random.choice([True, False])
+
+    if not use_vertex:
+        x_1, x_2 = x_intercepts
+        y_parabola = k * (x_parabola - x_1) * (x_parabola - x_2)
+        parabola_formula = f"y = {k} * (x - {x_1}) * (x - {x_2})"
+
+    else:
+        b, c = vertex
+        y_parabola = k * (x_parabola - b) ** 2 + c
+        parabola_formula = f"y = {k} (x - {b})^2 + {c}"
 
     # returns the equation of the graph
-    return x_linear, y_linear, linear_formula, "linear"
+    return x_parabola, y_parabola, parabola_formula, "parabola"
 
 
 def ask_equation(question):
@@ -74,7 +90,7 @@ def ask_equation(question):
 
 def main():
     # Main routine
-    x_linear, y_linear, linear_formula, graph_type = generate_linear("hard")
+    x_linear, y_linear, linear_formula, graph_type = generate_parabola("hard")
 
     # Create and start a thread to ask the equation
     equation_thread = threading.Thread(target=ask_equation, args=("What is the equation of the graph? ",))
