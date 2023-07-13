@@ -35,9 +35,16 @@ def display_graph(x, y, graph_type):
 
 
 def graph_generator(difficulty, mode):
+    graph_formula = 0
+    y_graph = 0
     x_graph = np.linspace(-20, 20, 10000)
+    types_of_graphs = ['parabola', 'linear']
+    type_graph = mode
 
-    if mode == 'parabola':
+    if mode == 'mixed':
+        type_graph = random.choice(types_of_graphs)
+
+    if type_graph == 'parabola':
         if difficulty == "easy":
             x_1 = random.randint(1, 10)
             x_2 = random.randint((x_1 - 2), (x_1 + 2))
@@ -78,6 +85,32 @@ def graph_generator(difficulty, mode):
             y_graph = k * (x_graph - b) ** 2 + c
             graph_formula = f"y = {k} (x - {b})^2 + {c}"
 
+    elif type_graph == "linear":
+        if difficulty == "hard":
+            # If difficulty is hard the gradient will be any random decimal between 0.5 and 5.
+            gradient = round(random.uniform(0.5, 5), 1)
+
+            # If difficulty is hard the y_intercept will be any random decimal between -15 and 15
+            y_intercept = round(random.uniform(-15, 15), 1)
+        elif difficulty == "medium":
+            # If difficulty is medium the gradient will be a multiple of 0.5 between 0.5 and 10
+            gradient = random.randint(1, 20) * 0.5
+
+            # If difficulty is medium the y_intercept will be a multiple of 0.5 between -15, and 15
+            y_intercept = random.randint(-30, 30) * 0.5
+        else:
+            # (easy mode) generates features that are integers
+            gradient = random.randint(1, 8)
+            y_intercept = random.randint(-15, 15)
+
+        # Placement of y coordinate according to the x points
+        y_graph = gradient * x_graph + y_intercept
+
+        # Formula of the graph
+        graph_formula = f'{gradient} * x + {y_intercept}'
+
+
+
     # returns the equation of the graph
     return x_graph, y_graph, graph_formula, mode
 
@@ -91,14 +124,14 @@ def ask_equation(question):
 
 def main():
     # Main routine
-    x, y, linear_formula, graph_type = graph_generator("hard", "parabola")
+    x, y, graph_formula, graph_type = graph_generator("hard", "parabola")
 
     # Create and start a thread to ask the equation
     equation_thread = threading.Thread(target=ask_equation, args=("What is the equation of the graph? ",))
     equation_thread.start()
 
     # Display the graph
-    display_graph(x_linear, y_linear, graph_type)
+    display_graph(x, y, graph_type)
 
     # Wait for the equation thread to complete
     equation_thread.join()
