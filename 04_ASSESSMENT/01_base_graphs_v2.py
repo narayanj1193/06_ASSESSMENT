@@ -106,7 +106,7 @@ def graph_generator(difficulty, mode):
             y_graph = k * (x_graph - b) ** 2 + c
             graph_formula = f"{k} (x - {b})^2 + {c}"
 
-    elif mode == "linear":
+    if mode == "linear":
 
         if difficulty == "hard":
             # If difficulty is hard the gradient will be any random decimal between 0.5 and 5.
@@ -221,17 +221,34 @@ def answer_checker(eq1, eq2):
         else:
             return True  # Return True if equations are the same
 
+    # error handling
     except TypeError:
         print('Invalid equation. Please try again.')
         return 'try again'
 
 
 def find_random_coordinate(graph_formula):
-    x = random.randint(-5, 5)  # Assuming x ranges from -100 to 100
-    x_val = sp.symbols('x')
-    y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
-    y = round(y, 1)
-    return x, y
+    max_iterations = 1000  # Maximum number of iterations to avoid infinite loop
+    iteration = 0
+
+    while iteration < max_iterations:
+        x = random.randint(-5, 5)  # Assuming x ranges from -5 to 5
+        x_val = sp.symbols('x')
+        y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
+
+        if isinstance(y, int):
+            return x, y
+
+        iteration += 1
+
+
+    # If no integer value is found within the maximum iterations, search for a y value with one decimal place
+    while True:
+        x = random.randint(-5, 5)
+        x_val = sp.symbols('x')
+
+        y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
+        return x, y
 
 
 def statement_generator(statement, decoration, above_below, has_emoji=False):
@@ -405,5 +422,4 @@ def main():
         exit()
 
 
-if __name__ == '__main__':
-    main()
+main()

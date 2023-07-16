@@ -66,15 +66,17 @@ def num_check(question, int_only=True, graph_close=False):
             return
 
 
-def compare_equations(eq1, eq2):
+# Function that simplifies two equations and compares them to see if they are the same
+def answer_checker(eq1, eq2):
     eq1 = str(eq1)
     eq2 = str(eq2)
 
+    # Replace characters within the equations to valid alternatives, to ensure there are no errors.
     if '^' in eq1:
-        eq1 = eq1.replace('^', '**')
+        eq1 = eq1.replace('^', '**').replace(' ', '')
 
     if '^' in eq2:
-        eq2 = eq2.replace('^', '**')
+        eq2 = eq2.replace('^', '**').replace(' ', '')
 
     eq1 = eq1.replace('x', '120')
     eq2 = eq2.replace('x', '120')
@@ -83,15 +85,14 @@ def compare_equations(eq1, eq2):
         eq1_calculated = eval(eq1)
         eq2_calculated = eval(eq2)
 
-        if eq1_calculated == eq2_calculated:
-            return 'correct'
+        if eq1_calculated != eq2_calculated:
+            return False  # Return False if equations are not the same
         else:
-            return 'false'
+            return True  # Return True if equations are the same
 
     except TypeError:
         print('Invalid equation. Please try again.')
-        return
-
+        return 'try again'
 
 
 # Example usage:
@@ -99,7 +100,7 @@ eq1 = "(x + 2) * (x - 3)"
 while True:
     eq2 = num_check("Enter an equation: ", False)
     try:
-        result = compare_equations(eq1, eq2)
+        result = answer_checker(eq1, eq2)
         print(eq2)
         print(result)
 
