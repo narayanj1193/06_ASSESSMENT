@@ -23,8 +23,6 @@ def num_check(question, int_only=True):
             if not int_only:
 
                 try:
-                    # Attempt to parse the response as a number
-                    number = eval(response.replace('x', '120').replace('y', '121'))
 
                     # Check if the number is a float or fraction
                     if isinstance(number, float) or isinstance(number, int) or isinstance(number, fractions.Fraction):
@@ -61,6 +59,8 @@ def num_check(question, int_only=True):
 
 
 def compare_equations(eq1, eq2):
+    eq1 = str(eq1)
+    eq2 = str(eq2)
 
     if '^' in eq1:
         eq1 = eq1.replace('^', '**')
