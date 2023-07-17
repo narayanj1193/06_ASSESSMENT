@@ -1,6 +1,5 @@
 import random
 import threading
-
 import sympy as sp
 import fractions
 import numpy as np
@@ -31,7 +30,7 @@ def user_choice(question, valid_list):
 
 def display_graph(x, y, graph_type):
     # Plots graph
-    plt.plot(x, y, linewidth=3, label='Linear')
+    plt.plot(x, y, linewidth=3)
 
     # Limits y axis
     plt.ylim(-25, 20)
@@ -42,7 +41,7 @@ def display_graph(x, y, graph_type):
     plt.xlabel('x - axis')
     plt.ylabel('y - axis')
 
-    if graph_type == "Linear":
+    if graph_type == "linear":
         plt.title('Linear Graph')
     else:
         plt.title('Parabola Graph')
@@ -52,7 +51,6 @@ def display_graph(x, y, graph_type):
     # vertical axis line at x = 0
     plt.axvline(color='black')
 
-    plt.legend()
     plt.grid()
 
     # shows graph
@@ -63,6 +61,13 @@ def graph_generator(difficulty, mode):
     graph_formula = 0
     x_graph = np.linspace(-20, 20, 10000)
     y_graph = ''
+
+    if mode == 'mixed':
+        mode = random.randint(1, 2)
+        if mode == 1:
+            mode = 'parabola'
+        else:
+            mode = 'linear'
 
     if mode == 'parabola':
 
@@ -104,7 +109,7 @@ def graph_generator(difficulty, mode):
         else:
             b, c = vertex
             y_graph = k * (x_graph - b) ** 2 + c
-            graph_formula = f"{k} (x - {b})^2 + {c}"
+            graph_formula = f"{k} * (x - {b})^2 + {c}"
 
     if mode == "linear":
 
@@ -209,6 +214,9 @@ def answer_checker(eq1, eq2):
     if '^' in eq2:
         eq2 = eq2.replace('^', '**').replace(' ', '')
 
+    if '(' in eq2 and '* (' not in eq2:
+        eq2 = eq2.replace('(', '* (')
+
     eq1 = eq1.replace('x', '120')
     eq2 = eq2.replace('x', '120')
 
@@ -222,7 +230,7 @@ def answer_checker(eq1, eq2):
             return True  # Return True if equations are the same
 
     # error handling
-    except TypeError:
+    except (TypeError, SyntaxError):
         print('Invalid equation. Please try again.')
         return 'try again'
 
@@ -234,21 +242,27 @@ def find_random_coordinate(graph_formula):
     while iteration < max_iterations:
         x = random.randint(-5, 5)  # Assuming x ranges from -5 to 5
         x_val = sp.symbols('x')
-        y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
-
-        if isinstance(y, int):
-            return x, y
+        try:
+            y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
+            if isinstance(y, int):
+                y = round(y, 1)
+                return x, y
+        except TypeError:
+            pass
 
         iteration += 1
-
 
     # If no integer value is found within the maximum iterations, search for a y value with one decimal place
     while True:
         x = random.randint(-5, 5)
         x_val = sp.symbols('x')
 
-        y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
-        return x, y
+        try:
+            y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
+            y = round(y, 1)
+            return x, y
+        except TypeError:
+            pass
 
 
 def statement_generator(statement, decoration, above_below, has_emoji=False):

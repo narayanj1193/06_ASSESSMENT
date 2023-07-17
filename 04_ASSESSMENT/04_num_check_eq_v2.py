@@ -1,5 +1,6 @@
 import fractions
 
+
 def num_check(question, int_only=True):
     # Error message
     error = "Please enter a valid number or 'xxx' to exit."
@@ -63,33 +64,6 @@ def num_check(question, int_only=True):
                     continue
             return response
 
-# Main routine
-questions_attempted = 0
-instruction = "Enter a number"
-
-# Ask the user for the number of questions or enter for continuous mode
-questions = num_check("How many questions would you like to answer? <enter> for continuous mode: ", True)
-
-while questions != "xxx":
-
-    if questions_attempted == questions:
-        break
-
-    # Questions Heading
-    print()
-    if questions == "":
-        heading = f"Continuous Mode: Question {questions_attempted + 1}"
-    else:
-        heading = f"Question {questions_attempted + 1} of {questions}"
-
-    print(heading)
-    choose = num_check(f"{instruction} or 'xxx' to end: ", False)
-
-    if choose == "xxx":
-        break
-
-    # Rest of the loop
-    print(f"You chose {choose}")
-    questions_attempted += 1
-
-print("Thanks for playing!")
+while True:
+    answer = num_check("What is the equation? ", False)
+    print(answer)
