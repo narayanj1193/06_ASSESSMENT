@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from statistics import mean
 
-
 user_equation_answer = ""  # Define user_equation_answer variable
 
 
@@ -216,7 +215,8 @@ def answer_checker(eq1, eq2):
         # Insert a multiplication operator before opening parentheses if not already present
         eq2 = eq2.replace('(', '* (')
 
-    # swaps the symbols with a valid number so that it can be evaluated.
+    # swaps the symbols with a valid number so that it can be evaluated. 120 was chosen because of ascii code
+
     eq1 = eq1.replace('x', '120')  # Replace 'x' with '120' in eq1
     eq2 = eq2.replace('x', '120')  # Replace 'x' with '120' in eq2
 
@@ -234,26 +234,23 @@ def answer_checker(eq1, eq2):
     # error handling
     except (TypeError, SyntaxError):
         print('Invalid equation. Please try again.')  # Print error message if there is an invalid equation
-        return 'try again'  # Return 'try again' to indicate that the user should try again
+        return 'try again'  # Return 'try again' so that the code will not continue with the guess
 
 
 def find_random_coordinate(graph_formula):
-    max_iterations = 1000  # Maximum number of iterations to avoid infinite loop
-    iteration = 0
 
-    while iteration < max_iterations:
+    # if iterations reach max_iterations it continues to the next loop.
+    # makes sure it does not run infinitely
+    for i in range(1, 100):
         x = random.randint(-5, 5)  # Assuming x ranges from -5 to 5
         x_val = sp.symbols('x')  # Create a symbolic variable 'x' for substitution
 
         try:
             y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
-            if isinstance(y, int): # checks if y is an integer value
-                y = round(y, 1)  # Round the y value to one decimal place
+            if y == round(y, 0):
                 return x, y  # Return the coordinates (x, y)
         except TypeError:
             pass
-
-        iteration += 1
 
     # If no integer value is found within the maximum iterations, search for a y value with one decimal place
     while True:
@@ -264,26 +261,30 @@ def find_random_coordinate(graph_formula):
             y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
             y = round(y, 1)  # Round the y value to one decimal place
             return x, y  # Return the coordinates (x, y)
+
+        # error handling
         except TypeError:
             pass
 
 
 def statement_generator(statement, decoration, above_below, has_emoji=False):
-    sides = decoration * 3
-    statement = f"{sides} {statement} {sides}"
+    sides = decoration * 3  # Create a string of the decoration repeated three times
+    statement = f"{sides} {statement} {sides}"  # Add the sides to the statement
 
     if has_emoji:
-        top_bottom_length = len(statement) + (len(sides) * 2) + 2
+        top_bottom_length = len(statement) + (len(sides) * 2) + 2  # Calculate the length of the top and bottom
+        # decorations
     else:
-        top_bottom_length = len(statement)
+        top_bottom_length = len(statement)  # Calculate the length of the top and bottom decorations
 
-    top_bottom = above_below * top_bottom_length
+    top_bottom = above_below * top_bottom_length  # Create a string of the above/below decoration repeated based on the
+    # length
 
-    print(top_bottom)
-    print(statement)
-    print(top_bottom)
+    print(top_bottom)  # Print the top decoration
+    print(statement)  # Print the statement with decorations
+    print(top_bottom)  # Print the bottom decoration
 
-    return ""
+    return
 
 
 def instructions():
@@ -294,86 +295,105 @@ def instructions():
     return ""
 
 
+# function is used as a response to limitations with threading
 def equation_checker(question, int_only):
     global user_equation_answer
+    # global variable is used to work around limitations with threading
 
     user_equation_answer = num_check(question, int_only)
 
     if user_equation_answer == "end_game":
         exit()
 
+    # closes graph after receiving answer
     plt.close()
 
 
 def main():
+    yes_no_list = ['yes', 'no']  # List of choices for yes/no questions
+    difficulty_list = ['easy', 'medium', 'hard']  # List of difficulty levels
+    modes_list = ['linear', 'parabola', 'mixed']  # List of graph modes
 
-    yes_no_list = ['yes', 'no']
-    difficulty_list = ['easy', 'medium', 'hard']
-    modes_list = ['linear', 'parabola', 'mixed']
+    statement_generator('WELCOME TO GRAPHS QUIZ', '📈', '*', True)  # Generate and print a decorated welcome statement
 
-    statement_generator('WELCOME TO GRAPHS QUIZ', '📈', '*', True)
-
+    # Prompt for user input regarding previous quiz attempts
     played_before = user_choice('Have you tried out this quiz before? ', yes_no_list)
 
     if played_before == 'no':
-        instructions()
+        instructions()  # Display instructions if the user hasn't played before
 
-    how_many_questions = num_check("How many questions would you like to attempt? <enter> for continuous mode: ", True)
-    if how_many_questions == "end_game":
-        print("Thanks for playing! ")
-        exit()
+    default_settings = user_choice("Would you like to play at default settings? ", yes_no_list)
 
-    graph_mode = user_choice("What mode would you like to play? (linear, parabola, or mixed): ", modes_list)
-    quiz_difficulty = user_choice("What difficulty would you like to play at? (easy, medium, or hard): ",
-                                  difficulty_list)
+    if default_settings == 'no':
+        # asks user for the number of questions to attempt
+        how_many_questions = num_check("How many questions would you like to attempt? <enter> for continuous mode: ", True)
+        if how_many_questions == "end_game":
+            print("Thanks for playing! ")
+            exit()  # End the program if the user wants to quit
 
-    end_game = False
+        # asks user for graph mode
+        graph_mode = user_choice("What mode would you like to play? (linear, parabola, or mixed): ", modes_list)
+        # asks user for the quiz difficulty level
+        quiz_difficulty = user_choice("What difficulty would you like to play at? (easy, medium, or hard): ",
+                                      difficulty_list)
+
+    else:
+        how_many_questions = 10
+        graph_mode = 'mixed'
+        quiz_difficulty = 'easy'
+
+    end_game = False  # controls game loop
     while not end_game:
-        questions_attempted = 0
-        questions_correct = 0
-        questions_wrong = 0
-        game_summary = []
-        guess_array = []
+        questions_attempted = 0  # Counter for the number of questions attempted
+        questions_correct = 0  # Counter for the number of questions answered correctly
+        questions_wrong = 0  # Counter for the number of questions answered incorrectly
+        game_summary = []  # List to store the summary of each question
+        guess_array = []  # List to store the number of guesses for each question
 
         while how_many_questions == "" or questions_attempted < int(how_many_questions):
-            questions_attempted += 1
+            questions_attempted += 1  # Increment the number of questions attempted
             print()
 
             if how_many_questions == "":
+                # Generate the heading for continuous mode
                 heading = f"Continuous Mode: Question {questions_attempted}"
             else:
+                # Generate the heading for regular mode
                 heading = f"Question: {questions_attempted} of {how_many_questions}"
             print(heading)
 
-            # Generate graph details
+            # Generate the graph details based on the quiz difficulty and graph mode
             x, y, graph_formula, type_graph = graph_generator(quiz_difficulty, graph_mode)
+            # Counter for the number of guesses for the current question
             amount_guesses = 0
-            next_question = False
 
+            next_question = False
             while not next_question:
-                hint_given = False
 
                 if amount_guesses == 3:
                     print(f"You have unfortunately run out of guesses. \nThe equation of the graph was {graph_formula}")
-                    questions_wrong += 1
-                    next_question = True
+                    questions_wrong += 1  # Increment the number of questions answered incorrectly
+                    next_question = True  # Move to the next question
 
                 elif amount_guesses <= 2:
-                    amount_guesses += 1
+                    amount_guesses += 1  # Increment the number of guesses
                     print(f"\nGuess {amount_guesses} of 3")
                     if amount_guesses == 3:
                         print("This is your last attempt!")
 
                     if '.0' in str(graph_formula):
+                        # Remove decimal point if it exists in the graph formula
                         graph_formula = graph_formula.replace('.0', '')
 
+                        # assigns thread so that question can be asked while the graph display function is running
                     ask_equation_thread = threading.Thread(target=equation_checker,
                                                            args=("\nWhat is the equation of the graph? ", False), )
-                    ask_equation_thread.start()
+                    ask_equation_thread.start()  # Start a new thread to prompt for the equation input
 
                     # Display the graph
                     display_graph(x, y, type_graph)
 
+                    # Wait for the equation input thread to complete
                     ask_equation_thread.join()
 
                     if user_equation_answer == 'end_game':
@@ -381,6 +401,7 @@ def main():
                         end_game = True
                         break
 
+                    # Check the user's answer against the graph formula
                     users_result = answer_checker(graph_formula, user_equation_answer)
 
                     if users_result == 'try again':
@@ -390,7 +411,7 @@ def main():
                     if users_result is False:
                         print("Incorrect ❌")
 
-                        if hint_given is not True:
+                        if amount_guesses <= 2:
                             give_hint = user_choice('Would you like a hint? ', yes_no_list)
 
                             if give_hint == "yes":
@@ -402,28 +423,28 @@ def main():
                         print(f"Your equation is: {user_equation_answer}")
                         print()
                         print("Your answer is correct ✅✅")
-                        questions_correct += 1
-                        next_question = True
+                        questions_correct += 1  # Increment the number of questions answered correctly
+                        next_question = True  # Move to the next question
 
                     # outcome variable for game summary
                     if users_result is True:
                         outcome = f"Question {questions_attempted}: Correct in {amount_guesses}"
                     else:
                         outcome = f"Question {questions_attempted}: You ran out of guesses 💀😂"
-                    game_summary.append(outcome)
-                    guess_array.append(amount_guesses)
+                    game_summary.append(outcome)  # Append the outcome to the game summary list
+                    guess_array.append(amount_guesses)  # Append the number of guesses to the guess array list
 
             if end_game:
-                break
+                break  # Exit the game loop if the user wants to quit
 
         # calculate quiz stats
         try:
-            average_guesses = mean(guess_array)
+            average_guesses = mean(guess_array)  # Calculate the average number of guesses
         except ValueError:
-            average_guesses = 0
+            average_guesses = 0  # Set average guesses to 0 if there are no guesses
 
         print()
-        statement_generator("Quiz Stats", "*", '')
+        statement_generator("Quiz Stats", "*", '')  # Generate and print a decorated statement for quiz stats
         print()
 
         if questions_attempted == 1:
@@ -434,8 +455,8 @@ def main():
         print(f"AVG: {average_guesses}\t|\tWRONG: {questions_wrong}\t|\tCORRECT: {questions_correct}")
         print()
         for game in game_summary:
-            print(game)
-        exit()
+            print(game)  # Print the summary of each question
+        exit()  # End the program
 
 
-main()
+main()  # run the program.

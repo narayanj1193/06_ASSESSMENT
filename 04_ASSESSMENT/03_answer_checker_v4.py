@@ -3,6 +3,7 @@ import fractions
 
 from matplotlib import pyplot as plt
 
+user_answer = 0
 
 def num_check(question, int_only=True, graph_close=False):
     error = "Please enter a valid number or 'xxx' to exit."
@@ -68,41 +69,53 @@ def num_check(question, int_only=True, graph_close=False):
 
 # Function that simplifies two equations and compares them to see if they are the same
 def answer_checker(eq1, eq2):
-    eq1 = str(eq1)
-    eq2 = str(eq2)
+    eq1 = str(eq1)  # Convert eq1 to a string
+    eq2 = str(eq2)  # Convert eq2 to a string
 
-    # Replace characters within the equations to valid alternatives, to ensure there are no errors.
+    # Replace '^' with '**' and remove any spaces. Python does not allow '^' for equation solving. Instead, it will
+    # cause a SyntaxError
     if '^' in eq1:
         eq1 = eq1.replace('^', '**').replace(' ', '')
 
     if '^' in eq2:
         eq2 = eq2.replace('^', '**').replace(' ', '')
 
-    eq1 = eq1.replace('x', '120')
-    eq2 = eq2.replace('x', '120')
+    if '(' in eq2 and '* (' not in eq2:
+        # Insert a multiplication operator before opening parentheses if not already present
+        eq2 = eq2.replace('(', '* (')
+
+    # swaps the symbols with a valid number so that it can be evaluated. 120 was chosen because of ascii code
+
+    eq1 = eq1.replace('x', '120')  # Replace 'x' with '120' in eq1
+    eq2 = eq2.replace('x', '120')  # Replace 'x' with '120' in eq2
 
     try:
+        # evaluates the equations
         eq1_calculated = eval(eq1)
         eq2_calculated = eval(eq2)
 
+        # if they are not the same then return false. else return true
         if eq1_calculated != eq2_calculated:
             return False  # Return False if equations are not the same
         else:
             return True  # Return True if equations are the same
 
-    except TypeError:
-        print('Invalid equation. Please try again.')
-        return 'try again'
+    # error handling
+    except (TypeError, SyntaxError):
+        print('Invalid equation. Please try again.')  # Print error message if there is an invalid equation
+        return 'try again'  # Return 'try again' so that the code will not continue with the guess
 
 
 # Example usage:
-eq1 = "(x + 2) * (x - 3)"
+computer = "x**2"
 while True:
-    eq2 = num_check("Enter an equation: ", False)
-    try:
-        result = answer_checker(eq1, eq2)
-        print(eq2)
-        print(result)
+    num_check("Enter an equation: ", False)
+    result = answer_checker(user_answer, computer)
+    print(user_answer)
 
-    except sp.SympifyError:
-        print("Invalid equation format. Please try again.")
+    if result is True:
+        print('Your answer is correct')
+    else:
+        print("your answer is incorrect")
+
+
