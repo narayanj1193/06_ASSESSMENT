@@ -6,7 +6,7 @@ import threading
 
 def display_graph(x, y, graph_type):
     # Plots graph
-    plt.plot(x, y, linewidth=3, label='Linear')
+    plt.plot(x, y, linewidth=3)
 
     # Limits y axis
     plt.ylim(-25, 20)
@@ -17,7 +17,7 @@ def display_graph(x, y, graph_type):
     plt.xlabel('x - axis')
     plt.ylabel('y - axis')
 
-    if graph_type == "Linear":
+    if graph_type == "linear":
         plt.title('Linear Graph')
     else:
         plt.title('Parabola Graph')
@@ -110,7 +110,6 @@ def graph_generator(difficulty, mode):
         graph_formula = f'{gradient} * x + {y_intercept}'
 
 
-
     # returns the equation of the graph
     return x_graph, y_graph, graph_formula, mode
 
@@ -124,20 +123,26 @@ def ask_equation(question):
 
 def main():
     # Main routine
-    x, y, graph_formula, graph_type = graph_generator("hard", "parabola")
+    difficulty = input('what difficulty? ')
+    mode = input('what mode? ')
+    while True:
+        print_new = False
+        while print_new is False:
+            x, y, graph_formula, graph_type = graph_generator(difficulty, mode)
 
-    # Create and start a thread to ask the equation
-    equation_thread = threading.Thread(target=ask_equation, args=("What is the equation of the graph? ",))
-    equation_thread.start()
+            # Create and start a thread to ask the equation
+            equation_thread = threading.Thread(target=ask_equation, args=("New graph? ",))
+            equation_thread.start()
 
-    # Display the graph
-    display_graph(x, y, graph_type)
+            # Display the graph
+            display_graph(x, y, graph_type)
 
-    # Wait for the equation thread to complete
-    equation_thread.join()
+            # Wait for the equation thread to complete
+            equation_thread.join()
 
-    # Access the user's response
-    print("User's response:", user_response)
+            # Access the user's response
+            if user_response == 'yes':
+                print_new = True
 
 
 # Call the main function

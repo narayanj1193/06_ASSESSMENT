@@ -61,13 +61,10 @@ def graph_generator(difficulty, mode):
     graph_formula = 0
     x_graph = np.linspace(-20, 20, 10000)
     y_graph = ''
+    types_of_graphs = ['linear', 'parabola']
 
     if mode == 'mixed':
-        mode = random.randint(1, 2)
-        if mode == 1:
-            mode = 'parabola'
-        else:
-            mode = 'linear'
+        mode = random.choice(types_of_graphs)
 
     if mode == 'parabola':
 
@@ -204,10 +201,11 @@ def num_check(question, int_only=True):
 
 # Function that simplifies two equations and compares them to see if they are the same
 def answer_checker(eq1, eq2):
-    eq1 = str(eq1)
-    eq2 = str(eq2)
+    eq1 = str(eq1)  # Convert eq1 to a string
+    eq2 = str(eq2)  # Convert eq2 to a string
 
-    # Replace characters within the equations to valid alternatives, to ensure there are no errors.
+    # Replace '^' with '**' and remove any spaces. Python does not allow '^' for equation solving. Instead, it will
+    # cause a SyntaxError
     if '^' in eq1:
         eq1 = eq1.replace('^', '**').replace(' ', '')
 
@@ -215,15 +213,19 @@ def answer_checker(eq1, eq2):
         eq2 = eq2.replace('^', '**').replace(' ', '')
 
     if '(' in eq2 and '* (' not in eq2:
+        # Insert a multiplication operator before opening parentheses if not already present
         eq2 = eq2.replace('(', '* (')
 
-    eq1 = eq1.replace('x', '120')
-    eq2 = eq2.replace('x', '120')
+    # swaps the symbols with a valid number so that it can be evaluated.
+    eq1 = eq1.replace('x', '120')  # Replace 'x' with '120' in eq1
+    eq2 = eq2.replace('x', '120')  # Replace 'x' with '120' in eq2
 
     try:
+        # evaluates the equations
         eq1_calculated = eval(eq1)
         eq2_calculated = eval(eq2)
 
+        # if they are not the same then return false. else return true
         if eq1_calculated != eq2_calculated:
             return False  # Return False if equations are not the same
         else:
@@ -231,8 +233,8 @@ def answer_checker(eq1, eq2):
 
     # error handling
     except (TypeError, SyntaxError):
-        print('Invalid equation. Please try again.')
-        return 'try again'
+        print('Invalid equation. Please try again.')  # Print error message if there is an invalid equation
+        return 'try again'  # Return 'try again' to indicate that the user should try again
 
 
 def find_random_coordinate(graph_formula):
@@ -241,12 +243,13 @@ def find_random_coordinate(graph_formula):
 
     while iteration < max_iterations:
         x = random.randint(-5, 5)  # Assuming x ranges from -5 to 5
-        x_val = sp.symbols('x')
+        x_val = sp.symbols('x')  # Create a symbolic variable 'x' for substitution
+
         try:
             y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
-            if isinstance(y, int):
-                y = round(y, 1)
-                return x, y
+            if isinstance(y, int): # checks if y is an integer value
+                y = round(y, 1)  # Round the y value to one decimal place
+                return x, y  # Return the coordinates (x, y)
         except TypeError:
             pass
 
@@ -254,13 +257,13 @@ def find_random_coordinate(graph_formula):
 
     # If no integer value is found within the maximum iterations, search for a y value with one decimal place
     while True:
-        x = random.randint(-5, 5)
-        x_val = sp.symbols('x')
+        x = random.randint(-5, 5)  # Generate another random x value
+        x_val = sp.symbols('x')  # Create a symbolic variable 'x' for substitution
 
         try:
             y = sp.sympify(graph_formula).subs(x_val, x)  # Evaluate the equation with the random x value
-            y = round(y, 1)
-            return x, y
+            y = round(y, 1)  # Round the y value to one decimal place
+            return x, y  # Return the coordinates (x, y)
         except TypeError:
             pass
 
@@ -358,7 +361,6 @@ def main():
                 elif amount_guesses <= 2:
                     amount_guesses += 1
                     print(f"\nGuess {amount_guesses} of 3")
-                    print(f"{graph_formula}")
                     if amount_guesses == 3:
                         print("This is your last attempt!")
 
@@ -421,7 +423,7 @@ def main():
             average_guesses = 0
 
         print()
-        print("*** Quiz Stats ***")
+        statement_generator("Quiz Stats", "*", '')
         print()
 
         if questions_attempted == 1:

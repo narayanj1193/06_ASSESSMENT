@@ -2,7 +2,7 @@ from sympy import symbols
 
 
 def answer_checker(user_answer, valid_answer):
-    if user_answer == valid_answer.replace('**', '^'):
+    if user_answer.replace('**', '^') == valid_answer.replace('**', '^'):
         return True
 
     else:
