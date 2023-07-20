@@ -54,7 +54,7 @@ def num_check(question, int_only=True):
                     response = int(response)
 
                     # if the amount is too low
-                    if response < 1:
+                    if 50 <= response <= 1:
                         print(error)
                         continue
 

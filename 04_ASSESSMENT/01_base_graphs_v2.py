@@ -184,18 +184,22 @@ def num_check(question, int_only=True):
                     print(error)
                     continue
 
+            # if int_only is true
             else:
                 try:
+                    # Check that the response is an integer
                     response = int(response)
-                    if response < 1:
-                        # If the response is an integer less than 1, print an error message
-                        print(error)
+
+                    # if the amount is too low or too high
+                    if response < 1 or response > 50:
+                        print("Please enter an integer that is more than 1 and less than 50.")
+
                         continue
 
                 except ValueError:
                     print(error)
                     continue
-            return response
+                return response
 
 
 # Function that simplifies two equations and compares them to see if they are the same
@@ -326,7 +330,8 @@ def main():
 
     if default_settings == 'no':
         # asks user for the number of questions to attempt
-        how_many_questions = num_check("How many questions would you like to attempt? <enter> for continuous mode: ", True)
+        how_many_questions = num_check("How many questions would you like to attempt? <enter> for continuous mode: ",
+                                       True)
         if how_many_questions == "end_game":
             print("Thanks for playing! ")
             exit()  # End the program if the user wants to quit
@@ -378,6 +383,9 @@ def main():
                 elif amount_guesses <= 2:
                     amount_guesses += 1  # Increment the number of guesses
                     print(f"\nGuess {amount_guesses} of 3")
+
+                    print([graph_formula])
+
                     if amount_guesses == 3:
                         print("This is your last attempt!")
 
@@ -426,10 +434,11 @@ def main():
                         questions_correct += 1  # Increment the number of questions answered correctly
                         next_question = True  # Move to the next question
 
+                    outcome = ''
                     # outcome variable for game summary
                     if users_result is True:
                         outcome = f"Question {questions_attempted}: Correct in {amount_guesses}"
-                    else:
+                    elif users_result is False and amount_guesses == 2:
                         outcome = f"Question {questions_attempted}: You ran out of guesses 💀😂"
                     game_summary.append(outcome)  # Append the outcome to the game summary list
                     guess_array.append(amount_guesses)  # Append the number of guesses to the guess array list
