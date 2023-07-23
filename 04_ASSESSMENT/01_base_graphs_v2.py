@@ -290,11 +290,63 @@ def statement_generator(statement, decoration, above_below, has_emoji=False):
 
 
 def instructions():
-    print("*** How to Play ***")
-    print()
-    print("These are the rules:")
-    print()
-    return ""
+    print("*** How to Play Graphs Quiz ***\n")
+
+    # Sections with Numbers
+    print("Your objective is to answer graph-related questions by providing the equation of the presented graph. \nYou "
+          "have up to three attempts to guess the correct equation. Choose your preferred difficulty level (easy,\n "
+          "medium, or hard) and graph mode (linear, parabola, or mixed) to customize your quiz experience. The game\n "
+          "will keep track of your progress, including the number of questions attempted, correct answers,\n "
+          "wrong answers, and your average number of guesses. Have fun and enjoy the challenge!\n")
+    print("1. Objective")
+    print("2. How to Answer")
+    print("3. Difficulty Levels")
+    print("4. Exiting the game\n")
+
+    # Ask the user to select a section
+    selected_section = input("If you would like to learn more enter the number of your desired section,"
+                             " otherwise press <enter>: ")
+
+    if selected_section == "":
+        return
+
+    # Display the selected section
+    elif selected_section == "1":
+        # Game Objective
+        print("\nObjective:")
+        print("Answer graph-related questions by providing the equation of the presented graph.\n")
+
+    elif selected_section == "2":
+        # How to Answer
+        print("\nHow to Answer:")
+        print("- You will be shown a graph, and you need to determine its equation.")
+        print("- You have a maximum of three attempts per question.")
+        print("- Enter your answer using a valid equation format.")
+        print("- For linear equations please use the format 'a * x + y' - if it is not in this format, your equation "
+              "will not be accepted")
+        print("- For quadratic equations please use either 'k * (x-a)^2 + b' or 'k * (x-a)*(x-b)'. Reminder,"
+              "if it is not in this format, it is likely your equation will not be accepted.")
+
+        print("\bYou have a maximum of three attempts to guess the correct equation for each graph.\b\n")
+
+    elif selected_section == "3":
+        # Difficulty Levels
+        print("\nDifficulty Levels:")
+        print("- Easy: Graphs with simple features and integer coordinates.")
+        print("- Medium: Graphs with more complex features and decimal coordinates.")
+        print("- Hard: Challenging graphs with a wide range of features and fractional coordinates.\n")
+
+    elif selected_section == "4":
+        # Exiting the Game
+        print("\nExiting the Game:")
+        print("If you wish to quit the game at any time, enter 'xxx' as your answer to any question.")
+        print("Make sure to close the graph before entering the exit code. \n")
+
+    else:
+        # Invalid input
+        print("Invalid input. Please select a valid section number.")
+
+    print("Enjoy the game and have fun! 📈💡\n")
 
 
 # function is used as a response to limitations with threading
@@ -324,7 +376,7 @@ def main():
     if played_before == 'no':
         instructions()  # Display instructions if the user hasn't played before
 
-    default_settings = user_choice("Would you like to play at default settings? ", yes_no_list)
+    default_settings = user_choice("\nWould you like to play at default settings? ", yes_no_list)
 
     if default_settings == 'no':
         # asks user for the number of questions to attempt
