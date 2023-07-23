@@ -344,6 +344,8 @@ while end_game is not True:
             if '.0' in graph_formula:
                 graph_formula = graph_formula.replace(".0", "")
 
+            print(graph_formula)
+
             user_equation = num_check("\nWhat is the equation of the graph? ", False)
             if user_equation == "end_game":
                 end_game = True

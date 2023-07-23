@@ -215,12 +215,11 @@ def answer_checker(eq1, eq2):
     if '^' in eq2:
         eq2 = eq2.replace('^', '**').replace(' ', '')
 
-    if '(' in eq2 and '* (' not in eq2:
+    if '(' in eq1 and '* (' not in eq1:
         # Insert a multiplication operator before opening parentheses if not already present
-        eq2 = eq2.replace('(', '* (')
+        eq1 = eq1.replace('(', '* (')
 
     # swaps the symbols with a valid number so that it can be evaluated. 120 was chosen because of ascii code
-
     eq1 = eq1.replace('x', '120')  # Replace 'x' with '120' in eq1
     eq2 = eq2.replace('x', '120')  # Replace 'x' with '120' in eq2
 
@@ -242,7 +241,6 @@ def answer_checker(eq1, eq2):
 
 
 def find_random_coordinate(graph_formula):
-
     # if iterations reach max_iterations it continues to the next loop.
     # makes sure it does not run infinitely
     for i in range(1, 100):
@@ -384,7 +382,7 @@ def main():
                     amount_guesses += 1  # Increment the number of guesses
                     print(f"\nGuess {amount_guesses} of 3")
 
-                    print([graph_formula])
+                    # print(graph_formula) - testing purposes
 
                     if amount_guesses == 3:
                         print("This is your last attempt!")
@@ -449,6 +447,7 @@ def main():
         # calculate quiz stats
         try:
             average_guesses = mean(guess_array)  # Calculate the average number of guesses
+            average_guesses = round(average_guesses, 2)
         except ValueError:
             average_guesses = 0  # Set average guesses to 0 if there are no guesses
 
