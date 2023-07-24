@@ -6,8 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from statistics import mean
 
-user_equation_answer = ""  # Define user_equation_answer variable
-
 
 # Function for choice checking. Compares users answer to items in valid_list.
 def user_choice(question, valid_list):
@@ -207,17 +205,13 @@ def answer_checker(eq1, eq2):
     eq1 = str(eq1)  # Convert eq1 to a string
     eq2 = str(eq2)  # Convert eq2 to a string
 
-    # Replace '^' with '**' and remove any spaces. Python does not allow '^' for equation solving. Instead, it will
-    # cause a SyntaxError
-    if '^' in eq1:
-        eq1 = eq1.replace('^', '**').replace(' ', '')
+    # Replace '^' with '**' and remove any spaces. Modifies both equations so that they do not cause SyntaxErrors.
+    # and so it can be equated using eval. lstrip is used to remove the preceding '*' which may cause Syntax errors.
+    eq1 = eq1.replace('*', '').replace('^', '**').replace('(', '* (').replace('1 * (', '(').replace('x', '* x')\
+        .replace('(* x', '(x').replace(' + 0', '').replace('1 * x', 'x').replace('-0', '').lstrip('*')
 
-    if '^' in eq2:
-        eq2 = eq2.replace('^', '**').replace(' ', '')
-
-    if '(' in eq1 and '* (' not in eq1:
-        # Insert a multiplication operator before opening parentheses if not already present
-        eq1 = eq1.replace('(', '* (')
+    eq2 = eq2.replace('*', '').replace('^', '**').replace('(', '* (').replace('1 * (', '(').replace('x', '* x')\
+        .replace('(* x', '(x').replace(' + 0', '').replace('1 * x', 'x').replace('- 0', '').lstrip('*')
 
     # swaps the symbols with a valid number so that it can be evaluated. 120 was chosen because of ascii code
     eq1 = eq1.replace('x', '120')  # Replace 'x' with '120' in eq1
@@ -241,7 +235,7 @@ def answer_checker(eq1, eq2):
 
 
 def find_random_coordinate(graph_formula):
-    # if iterations reach max_iterations it continues to the next loop.
+
     # makes sure it does not run infinitely
     for i in range(1, 100):
         x = random.randint(-5, 5)  # Assuming x ranges from -5 to 5
@@ -349,6 +343,9 @@ def instructions():
     print("Enjoy the game and have fun! 📈💡\n")
 
 
+user_equation_answer = ""  # Define user_equation_answer variable. Must be defined at module level.
+
+
 # function is used as a response to limitations with threading
 def equation_checker(question, int_only):
     global user_equation_answer
@@ -434,7 +431,7 @@ def main():
                     amount_guesses += 1  # Increment the number of guesses
                     print(f"\nGuess {amount_guesses} of 3")
 
-                    # print(graph_formula) - testing purposes
+                    # print(graph_formula)  - testing purposes
 
                     if amount_guesses == 3:
                         print("This is your last attempt!")
@@ -474,7 +471,15 @@ def main():
 
                             if give_hint == "yes":
                                 random_coordinate = find_random_coordinate(graph_formula)
-                                print(f"The graph passes through: {random_coordinate}")
+
+                                if type_graph == 'linear':
+                                    random_coordinate_2 = random_coordinate
+                                    while random_coordinate_2 == random_coordinate:
+                                        random_coordinate_2 = find_random_coordinate(graph_formula)
+                                    print(f"The graph passes through: {random_coordinate} and {random_coordinate_2}")
+
+                                else:
+                                    print(f"The graph passes through: {random_coordinate}")
 
                     else:
                         print(f"The equation of the graph is: {graph_formula}")
@@ -484,14 +489,16 @@ def main():
                         questions_correct += 1  # Increment the number of questions answered correctly
                         next_question = True  # Move to the next question
 
-                    outcome = ''
-                    # outcome variable for game summary
-                    if users_result is True:
-                        outcome = f"Question {questions_attempted}: Correct in {amount_guesses}"
-                    elif users_result is False and amount_guesses == 2:
-                        outcome = f"Question {questions_attempted}: You ran out of guesses 💀😂"
-                    game_summary.append(outcome)  # Append the outcome to the game summary list
-                    guess_array.append(amount_guesses)  # Append the number of guesses to the guess array list
+                    outcome = ''  # outcome variable for game summary
+
+                    if end_game is not True:
+                        if users_result is True:
+                            outcome = f"Question {questions_attempted}: Correct in {amount_guesses}"
+                        elif users_result is False and amount_guesses == 2:
+                            outcome = f"Question {questions_attempted}: You ran out of guesses 💀😂"
+
+                        game_summary.append(outcome)  # Append the outcome to the game summary list
+                        guess_array.append(amount_guesses)  # Append the number of guesses to the guess array list
 
             if end_game:
                 break  # Exit the game loop if the user wants to quit

@@ -74,18 +74,11 @@ def answer_checker(eq1, eq2):
 
     # Replace '^' with '**' and remove any spaces. Python does not allow '^' for equation solving. Instead, it will
     # cause a SyntaxError
-    if '^' in eq1:
-        eq1 = eq1.replace('^', '**').replace(' ', '')
+    eq1 = eq1.replace('*', '').replace('^', '**').replace('(', '* (').replace('x', '* x')
 
-    if '^' in eq2:
-        eq2 = eq2.replace('^', '**').replace(' ', '')
 
-    if '(' in eq2 and '* (' not in eq2:
-        # Insert a multiplication operator before opening parentheses if not already present
-        eq2 = eq2.replace('(', '* (')
 
     # swaps the symbols with a valid number so that it can be evaluated. 120 was chosen because of ascii code
-
     eq1 = eq1.replace('x', '120')  # Replace 'x' with '120' in eq1
     eq2 = eq2.replace('x', '120')  # Replace 'x' with '120' in eq2
 
