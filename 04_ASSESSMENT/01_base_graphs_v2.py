@@ -154,6 +154,7 @@ def num_check(question, int_only=True):
         response = input(question)
 
         if response == "xxx":
+            plt.close()  # close graph if open
             return "end_game"
 
         elif response == "":
