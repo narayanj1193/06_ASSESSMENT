@@ -1,4 +1,4 @@
-import random
+ import random
 import threading
 import sympy as sp
 import fractions
@@ -25,7 +25,6 @@ def user_choice(question, valid_list):
         print(f"{error}\n")
 
 
-# generate graph details
 def display_graph(x, y, graph_type):
     # Plots graph
     plt.plot(x, y, linewidth=3)
@@ -55,93 +54,85 @@ def display_graph(x, y, graph_type):
     plt.show()
 
 
-# Define the graph generator function with inputs "difficulty" and "mode"
 def graph_generator(difficulty, mode):
-    # Initialize variables to store graph data
     graph_formula = 0
     x_graph = np.linspace(-20, 20, 10000)
     y_graph = ''
-
-    # List of supported graph types
     types_of_graphs = ['linear', 'parabola']
 
-    # If mode is 'mixed', randomly select one of the supported graph types
     if mode == 'mixed':
         mode = random.choice(types_of_graphs)
 
-    # Generate a parabola graph
     if mode == 'parabola':
-        # Different difficulty levels lead to different parabola properties
+
         if difficulty == "easy":
-            # Randomly select x-intercepts within certain range
             x_1 = random.randint(1, 10)
             x_2 = random.randint((x_1 - 2), (x_1 + 2))
-            # Randomly select a value for 'k' (coefficient)
+
             k = random.randint(1, 2)
-            # Randomly select a vertex within a certain range
+
             vertex = [random.randint(0, 5), random.randint(0, 5)]
+
         elif difficulty == "medium":
-            # Randomly select x-intercepts and 'k' within certain ranges
             x_1 = random.randint(-20, 20) * 0.5
             x_2 = round(random.uniform(x_1 - 5.5, x_1 + 5.5))
+
             k = random.randint(1, 5)
-            # Randomly select a vertex within a certain range
+
             vertex = [random.randint(-20, 20) * 0.5, random.randint(-20, 20) * 0.5]
+
         else:
-            # Randomly select x-intercepts, 'k', and vertex within certain ranges
             x_1 = round(random.uniform(-10, 10), 1)
             x_2 = round(random.uniform(x_1 - 5, x_1 + 5), 1)
+
             k = 0
             while k == 0:
                 k = random.randint(-5, 5)
+
             vertex = [round(random.uniform(-10, 10), 1), round(random.randint(-10, 10), 1)]
 
-        # Store the x-intercepts in a list
         x_intercepts = [x_1, x_2]
 
-        # Randomly decide whether to use x-intercepts or vertex form of the parabola
         use_vertex = random.choice([True, False])
 
         if not use_vertex:
-            # Calculate y values using x-intercepts and 'k' (standard form of a parabola)
             x_1, x_2 = x_intercepts
             y_graph = k * (x_graph - x_1) * (x_graph - x_2)
-            # Generate the equation of the parabola in standard form
             graph_formula = f"{k} * (x - {x_1}) * (x - {x_2})"
+
         else:
-            # Calculate y values using vertex and 'k' (vertex form of a parabola)
             b, c = vertex
             y_graph = k * (x_graph - b) ** 2 + c
-            # Generate the equation of the parabola in vertex form
             graph_formula = f"{k} * (x - {b})^2 + {c}"
 
-    # Generate a linear graph
     if mode == "linear":
+
         if difficulty == "hard":
-            # If difficulty is hard, randomly select a gradient between 0.5 and 5
+            # If difficulty is hard the gradient will be any random decimal between 0.5 and 5.
             gradient = round(random.uniform(0.5, 5), 1)
-            # If difficulty is hard, randomly select a y-intercept between -15 and 15
+
+            # If difficulty is hard the y_intercept will be any random decimal between -15 and 15
             y_intercept = round(random.uniform(-15, 15), 1)
         elif difficulty == "medium":
-            # If difficulty is medium, randomly select a gradient as a multiple of 0.5 between 0.5 and 10
+            # If difficulty is medium the gradient will be a multiple of 0.5 between 0.5 and 10
             gradient = random.randint(1, 20) * 0.5
-            # If difficulty is medium, randomly select a y-intercept as a multiple of 0.5 between -15 and 15
+
+            # If difficulty is medium the y_intercept will be a multiple of 0.5 between -15, and 15
             y_intercept = random.randint(-30, 30) * 0.5
         else:
-            # If difficulty is easy, randomly select integer values for the gradient and y-intercept
+            # (easy mode) generates features that are integers
             gradient = random.randint(1, 8)
             y_intercept = random.randint(-15, 15)
 
-        # Calculate y values using the linear equation y = mx + c
+        # Placement of y coordinate according to the x points
         y_graph = gradient * x_graph + y_intercept
-        # Generate the equation of the linear graph
+
+        # Formula of the graph
         graph_formula = f'{gradient} * x + {y_intercept}'
 
-    # Convert the graph_formula to a string for answer checker
     graph_formula = str(graph_formula)
     type_graph = mode
-
-    # Return the x values, y values, graph formula, and type of graph
+    # returns the equation of the graph
     return x_graph, y_graph, graph_formula, type_graph
 
 
@@ -214,13 +205,14 @@ def answer_checker(eq1, eq2):
     eq1 = str(eq1)  # Convert eq1 to a string
     eq2 = str(eq2)  # Convert eq2 to a string
 
-    # Replace '^' with '**' and remove any spaces. Modifies both equations so that they do not cause SyntaxErrors.
-    # and so it can be equated using eval. lstrip is used to remove the preceding '*' which may cause Syntax errors.
-    eq1 = eq1.replace('*', '').replace('^', '**').replace('(', '* (').replace('1 * (', '(').replace('x', '* x') \
-        .replace('(* x', '(x').replace(' + 0', '').replace('1 * x', 'x').replace('-0', '').lstrip('*')
+    # Replace '^' with '**' and remove any spaces. Python does not allow '^' for equation solving. Instead, it will
+    # cause a SyntaxError
+    eq1 = eq1.replace('*', '').replace('^', '**').replace('(', '* (').replace('x', '* x').replace('(* x', '(x').\
+        replace('1 * (x', '(x').replace(' + 0', '').replace('1 * x', 'x')
 
-    eq2 = eq2.replace('*', '').replace('^', '**').replace('(', '* (').replace('1 * (', '(').replace('x', '* x') \
-        .replace('(* x', '(x').replace(' + 0', '').replace('1 * x', 'x').replace('- 0', '').lstrip('*')
+    eq2 = eq2.replace('*', '').replace('^', '**').replace('(', '* (').replace('x', '* x').replace('(* x', '(x').\
+        replace(' + 0', '').replace('1 * x', 'x')
+
 
     # swaps the symbols with a valid number so that it can be evaluated. 120 was chosen because of ascii code
     eq1 = eq1.replace('x', '120')  # Replace 'x' with '120' in eq1
@@ -238,12 +230,13 @@ def answer_checker(eq1, eq2):
             return True  # Return True if equations are the same
 
     # error handling
-    except (TypeError, SyntaxError):
+    except (TypeError):
         print('Invalid equation. Please try again.')  # Print error message if there is an invalid equation
         return 'try again'  # Return 'try again' so that the code will not continue with the guess
 
 
 def find_random_coordinate(graph_formula):
+    # if iterations reach max_iterations it continues to the next loop.
     # makes sure it does not run infinitely
     for i in range(1, 100):
         x = random.randint(-5, 5)  # Assuming x ranges from -5 to 5
@@ -294,79 +287,64 @@ def statement_generator(statement, decoration, above_below, has_emoji=False):
 def instructions():
     print("*** How to Play Graphs Quiz ***\n")
 
-    # Brief description of game
+    # Sections with Numbers
     print("Your objective is to answer graph-related questions by providing the equation of the presented graph. \nYou "
           "have up to three attempts to guess the correct equation. Choose your preferred difficulty level (easy,\n "
           "medium, or hard) and graph mode (linear, parabola, or mixed) to customize your quiz experience. The game\n "
           "will keep track of your progress, including the number of questions attempted, correct answers,\n "
           "wrong answers, and your average number of guesses. Have fun and enjoy the challenge!\n")
-    # Sections with numbers
     print("1. Objective")
     print("2. How to Answer")
     print("3. Difficulty Levels")
-    print("4. Using the Graph display")
-    print("5. Exiting the game\n")
+    print("4. Exiting the game\n")
 
     # Ask the user to select a section
-    selected_section = '0'
-    while selected_section != "":
-        selected_section = input("If you would like to learn more enter the number of your desired section,"
-                                 " otherwise press <enter>: ")
+    selected_section = input("If you would like to learn more enter the number of your desired section,"
+                             " otherwise press <enter>: ")
 
-        # If user presses enter, program continues
-        if selected_section == "":
-            break
+    if selected_section == "":
+        return
 
-        # Display the selected section
-        elif selected_section == "1":
-            # Game Objective
-            print("\nObjective:")
-            print("Answer graph-related questions by providing the equation of the presented graph.\n")
+    # Display the selected section
+    elif selected_section == "1":
+        # Game Objective
+        print("\nObjective:")
+        print("Answer graph-related questions by providing the equation of the presented graph.\n")
 
-        elif selected_section == "2":
-            # How to Answer
-            print("\nHow to Answer:")
-            print("- You will be shown a graph, and you need to determine its equation.")
-            print("- You have a maximum of three attempts per question.")
-            print("- Enter your answer using a valid equation format.")
-            print("- For linear equations please use the format 'mx + c'")
-            print("- For quadratic equations please use either 'k * (x-a)^2 + b' or 'k * (x-a)*(x-b)'.")
+    elif selected_section == "2":
+        # How to Answer
+        print("\nHow to Answer:")
+        print("- You will be shown a graph, and you need to determine its equation.")
+        print("- You have a maximum of three attempts per question.")
+        print("- Enter your answer using a valid equation format.")
+        print("- For linear equations please use the format 'a * x + y' - if it is not in this format, your equation "
+              "will not be accepted")
+        print("- For quadratic equations please use either 'k * (x-a)^2 + b' or 'k * (x-a)*(x-b)'. Reminder,"
+              "if it is not in this format, it is likely your equation will not be accepted.")
 
-            print('\033[1m!! You have a maximum of three attempts to guess the correct equation for each '
-                  'graph !!\033[0m')  # Bold text
+        print("\bYou have a maximum of three attempts to guess the correct equation for each graph.\b\n")
 
-        elif selected_section == "3":
-            # Difficulty Levels
-            print("\nDifficulty Levels:")
-            print("- Easy: Graphs with simple features and integer coordinates.")
-            print("- Medium: Graphs with more complex features and decimal coordinates.")
-            print("- Hard: Challenging graphs with a wide range of features and fractional coordinates.\n")
+    elif selected_section == "3":
+        # Difficulty Levels
+        print("\nDifficulty Levels:")
+        print("- Easy: Graphs with simple features and integer coordinates.")
+        print("- Medium: Graphs with more complex features and decimal coordinates.")
+        print("- Hard: Challenging graphs with a wide range of features and fractional coordinates.\n")
 
-        elif selected_section == '4':
-            # ways to use the graph
-            print("\nHow to use the graph:")
-            print("- You can move the graph around by pressing the arrow cross button in the bottom left corner of the "
-                  "graph display.")
-            print("- You can zoom into the graph by pressing the magnifying glass at the bottom of the graph display."
-                  "When you press it you can draw a square using your left mouse button to zoom in to the area you have"
-                  "drawn.")
-            print("- Pressing the house button will reset the graph to its original display. By pressing the two arrows"
-                  "you can also undo or redo changes you have done to the graph display. \n")
+    elif selected_section == "4":
+        # Exiting the Game
+        print("\nExiting the Game:")
+        print("If you wish to quit the game at any time, enter 'xxx' as your answer to any question.")
+        print("Make sure to close the graph before entering the exit code. \n")
 
-        elif selected_section == "5":
-            # Exiting the Game
-            print("\nExiting the Game:")
-            print("If you wish to quit the game at any time, enter 'xxx' as your answer to any question.")
-            print("Make sure to close the graph before entering the exit code. \n")
-
-        else:
-            # Invalid input
-            print("Invalid input. Please select a valid section number.")
+    else:
+        # Invalid input
+        print("Invalid input. Please select a valid section number.")
 
     print("Enjoy the game and have fun! 📈💡\n")
 
 
-user_equation_answer = ""  # Define user_equation_answer global variable. Must be defined at module level.
+user_equation_answer = ""  # Define user_equation_answer variable. Must be defined at module level.
 
 
 # function is used as a response to limitations with threading
@@ -383,7 +361,6 @@ def equation_checker(question, int_only):
     plt.close()
 
 
-# main routine
 def main():
     yes_no_list = ['yes', 'no']  # List of choices for yes/no questions
     difficulty_list = ['easy', 'medium', 'hard']  # List of difficulty levels
@@ -447,8 +424,7 @@ def main():
             while not next_question:
 
                 if amount_guesses == 3:
-                    print("\033[1m\nYou have unfortunately run out of guesses.\033[0m")
-                    print(f"\nThe equation of the graph was {graph_formula}")
+                    print(f"You have unfortunately run out of guesses. \nThe equation of the graph was {graph_formula}")
                     questions_wrong += 1  # Increment the number of questions answered incorrectly
                     next_question = True  # Move to the next question
 
@@ -456,16 +432,14 @@ def main():
                     amount_guesses += 1  # Increment the number of guesses
                     print(f"\nGuess {amount_guesses} of 3")
 
-                    # print(graph_formula)  - testing purposes
+                    print(graph_formula)  # - testing purposes
 
                     if amount_guesses == 3:
                         print("This is your last attempt!")
 
-                    if '.0' in str(graph_formula):
-                        # Remove decimal point if it exists in the graph formula
-                        graph_formula = graph_formula.replace('.0', '')
+                    graph_formula = graph_formula.replace('1 *', '')
 
-                        # assigns thread so that question can be asked while the graph display function is running
+                    # assigns thread so that question can be asked while the graph display function is running
                     ask_equation_thread = threading.Thread(target=equation_checker,
                                                            args=("\nWhat is the equation of the graph? ", False), )
                     ask_equation_thread.start()  # Start a new thread to prompt for the equation input
@@ -480,6 +454,9 @@ def main():
                         plt.close()
                         end_game = True
                         break
+
+                    # simplifies equation.
+                    graph_formula.replace('1 *', '').replace('+ 0', '')
 
                     # Check the user's answer against the graph formula
                     users_result = answer_checker(graph_formula, user_equation_answer)
@@ -496,15 +473,7 @@ def main():
 
                             if give_hint == "yes":
                                 random_coordinate = find_random_coordinate(graph_formula)
-
-                                if type_graph == 'linear':
-                                    random_coordinate_2 = random_coordinate
-                                    while random_coordinate_2 == random_coordinate:
-                                        random_coordinate_2 = find_random_coordinate(graph_formula)
-                                    print(f"The graph passes through: {random_coordinate} and {random_coordinate_2}")
-
-                                else:
-                                    print(f"The graph passes through: {random_coordinate}")
+                                print(f"The graph passes through: {random_coordinate}")
 
                     else:
                         print(f"The equation of the graph is: {graph_formula}")
@@ -519,15 +488,13 @@ def main():
                     if end_game is not True:
                         if users_result is True:
                             outcome = f"Question {questions_attempted}: Correct in {amount_guesses}"
-                            guess_array.append(amount_guesses)  # append amount of guesses for game summary
                         elif users_result is False and amount_guesses == 2:
                             outcome = f"Question {questions_attempted}: You ran out of guesses 💀😂"
-                            guess_array.append(3)
 
                         game_summary.append(outcome)  # Append the outcome to the game summary list
+                        guess_array.append(amount_guesses)  # Append the number of guesses to the guess array list
 
             if end_game:
-                plt.close()
                 break  # Exit the game loop if the user wants to quit
 
         # calculate quiz stats
@@ -550,8 +517,6 @@ def main():
         print()
         for game in game_summary:
             print(game)  # Print the summary of each question
-
-        print("Thanks for playing!")
         exit()  # End the program
 
 

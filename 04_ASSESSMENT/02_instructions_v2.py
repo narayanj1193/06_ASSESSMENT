@@ -23,6 +23,7 @@ def user_choice(question, valid_list):
         # output error if item not in list, checks item if it is in valid_list, then continues to this.
         print(f"{error}\n")
 
+
 # Main routine
 yes_no_list = ['yes', 'no']
 
